@@ -1,0 +1,31 @@
+{
+  "name": "hubot-commands",
+  "version": "0.1.0",
+  "description": "command-line interface for Hubot scripts",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hubotio/hubot-commands.git"
+  },
+  "keywords": [
+    "hubot"
+  ],
+  "author": "Brandon Keepers <bkeepers@github.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hubotio/hubot-commands/issues"
+  },
+  "homepage": "https://github.com/hubotio/hubot-commands#readme",
+  "dependencies": {
+    "commander": "^2.9.0"
+  },
+  "devDependencies": {
+    "mocha": "^3.4.1"
+  }
+}
