@@ -30,3 +30,17 @@ describe('hubot-commands', () => {
       ['hubot', 'hello world']
     ]);
   });
+
+  it('registers the command with arguments', async () => {
+    cli.command('hello <name>', res => {
+      res.send(`${res.args.name}, ${res.envelope.user.name} says hello`);
+    });
+
+    await room.user.say('alice', 'hubot hello bob');
+
+    expect(room.messages).toEqual([
+      ['alice', '@hubot hello bob'],
+      ['hubot', 'bob, alice says hello']
+    ]);
+  });
+});
