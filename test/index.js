@@ -31,16 +31,29 @@ describe('hubot-commands', () => {
     ]);
   });
 
-  it('registers the command with arguments', async () => {
-    cli.command('hello <name>', (res, name) => {
-      res.send(`${name}, ${res.envelope.user.name} says hello`);
+  describe('command with required arguments', () => {
+    beforeEach(() => {
+      cli.command('hello <name>', (res, name) => {
+        res.send(`${name}, ${res.envelope.user.name} says hello`);
+      });
     });
 
-    await room.user.say('alice', '@hubot hello bob');
+    it('passes arguments to callback', async () => {
+      await room.user.say('alice', '@hubot hello bob');
 
-    expect(room.messages).toEqual([
-      ['alice', '@hubot hello bob'],
-      ['hubot', 'bob, alice says hello']
-    ]);
+      expect(room.messages).toEqual([
+        ['alice', '@hubot hello bob'],
+        ['hubot', 'bob, alice says hello']
+      ]);
+    });
+
+    it('returns an error when missing arguments', async () => {
+      await room.user.say('alice', '@hubot hello');
+
+      expect(room.messages).toEqual([
+        ['alice', '@hubot hello'],
+        ['hubot', 'error: missing required argument `name`']
+      ]);
+    });
   });
 });
