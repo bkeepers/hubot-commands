@@ -22,9 +22,6 @@
     "url": "https://github.com/hubotio/hubot-commands/issues"
   },
   "homepage": "https://github.com/hubotio/hubot-commands#readme",
-  "dependencies": {
-    "commander": "^2.9.0"
-  },
   "peerDependencies": {
     "hubot": "^2.19.0"
   },
