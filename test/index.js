@@ -36,6 +36,11 @@ describe('hubot-commands', () => {
       cli.command('hello <name>', (res, name) => {
         res.send(`${name}, ${res.envelope.user.name} says hello`);
       });
+
+      cli.command('goodbye [name]', (res, name) => {
+        res.reply(`goodbye`);
+      });
+
     });
 
     it('passes arguments to callback', async () => {
@@ -47,7 +52,7 @@ describe('hubot-commands', () => {
       ]);
     });
 
-    it('returns an error when missing arguments', async () => {
+    it('returns an error when missing required arguments', async () => {
       await room.user.say('alice', '@hubot hello');
 
       expect(room.messages).toEqual([
@@ -55,5 +60,15 @@ describe('hubot-commands', () => {
         ['hubot', 'error: missing required argument `name`']
       ]);
     });
+
+    it('does not return an error when optional arguments', async () => {
+      await room.user.say('alice', '@hubot goodbye');
+
+      expect(room.messages).toEqual([
+        ['alice', '@hubot goodbye'],
+        ['hubot', '@alice goodbye']
+      ]);
+    });
+
   });
 });
