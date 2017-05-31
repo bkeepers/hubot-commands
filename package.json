@@ -7,7 +7,7 @@
     "test": "test"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "mocha & standard"
   },
   "repository": {
     "type": "git",
@@ -29,6 +29,10 @@
     "expect": "^1.20.2",
     "hubot": "^2.19.0",
     "hubot-test-helper": "^1.5.1",
-    "mocha": "^3.4.1"
+    "mocha": "^3.4.1",
+    "standard": "^10.0.2"
+  },
+  "standard": {
+    "env": ["mocha"]
   }
 }
