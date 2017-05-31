@@ -1,3 +1,4 @@
+const {TextMessage} = require('hubot')
 
 class Command {
   constructor(definition, action) {
@@ -6,20 +7,6 @@ class Command {
     this.name = name;
     this.arguments = args.map(arg => new Argument(arg));
     this.action = action;
-  }
-
-  get regex() {
-    return new RegExp(`${this.name}(?: (.*))?`, 'i');
-  }
-
-  handler(res) {
-    const args = res.match[1] ? res.match[1].split(/ +/) : [];
-    try {
-      this.validateArgs(args);
-      return this.action(res, ...args);
-    } catch(error) {
-      res.send(`error: ${error}`);
-    }
   }
 
   validateArgs(args) {
@@ -34,6 +21,15 @@ class Command {
       return this._description;
     } else {
       this._description = str;
+      return this;
+    }
+  }
+
+  alias(alias) {
+    if(alias === undefined) {
+      return this._alias;
+    } else {
+      this._alias = alias;
       return this;
     }
   }
@@ -68,15 +64,41 @@ class Argument {
 
 module.exports = (robot) => {
   const commands = [];
+  const regex = robot.respondPattern(/(\w+)(?: (.*))?/);
+
+  function listener(message) {
+    if(message instanceof TextMessage) {
+      const match = message.match(regex);
+      if(match) {
+        match.command = commands.find(cmd => {
+          return [cmd.name, cmd.alias()].includes(match[1]);
+        });
+        if(match.command) {
+          return match
+        }
+      }
+    }
+  }
+
+  function handler(res) {
+    const cmd = res.match.command;
+    const args = res.match[2] ? res.match[2].split(/ +/) : [];
+    try {
+      cmd.validateArgs(args);
+      return cmd.action(res, ...args);
+    } catch(error) {
+      res.send(`error: ${error}`);
+    }
+  }
 
   function command(name, action) {
     const cmd = new Command(name, action);
-    robot.respond(cmd.regex, cmd.handler.bind(cmd));
     commands.push(cmd)
     return cmd;
   }
 
-  //
+  robot.listen(listener, handler);
+
   command('help', (res) => {
     const help  = commands.map(cmd => cmd.help).filter(cmd => cmd);
     res.send(help.join('\n'));

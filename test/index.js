@@ -113,4 +113,28 @@ describe('.command', () => {
       ]);
     });
   });
+
+  describe('alias', () => {
+    beforeEach(() => {
+      cli.command('hello', res => res.send('hello world')).alias('hi');
+    });
+
+    it('invokes command by alias', async () => {
+      await room.user.say('alice', '@hubot hi');
+
+      expect(room.messages).toEqual([
+        ['alice', '@hubot hi'],
+        ['hubot', 'hello world']
+      ]);
+    });
+
+    it('does not invoke command with mismatched alias', async () => {
+      await room.user.say('alice', '@hubot hip');
+
+      expect(room.messages).toEqual([
+        ['alice', '@hubot hip']
+      ]);
+    });
+
+  });
 });

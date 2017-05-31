@@ -1,0 +1,11 @@
+
+- [ ] explicit args
+  - [x] required: `deploy <branch>`
+  - [x] optional: `deploy <branch> [environment]`
+  - [ ] Variadic: `deploy <branch> [hosts...]`
+  - [ ] coercion & regex for advanced syntax
+  - [ ] default values
+- [ ] subcommands: `deploy list`
+- [ ] alias
+- [x] automated help
+- [ ] listener metadata
