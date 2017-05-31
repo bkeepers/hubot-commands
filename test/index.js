@@ -7,7 +7,7 @@ const Helper = require('hubot-test-helper');
 
 const helper = new Helper([]);
 
-describe('hubot-commands', () => {
+describe('.command', () => {
   let cli;
   let room;
 
@@ -31,16 +31,11 @@ describe('hubot-commands', () => {
     ]);
   });
 
-  describe('command with required arguments', () => {
+  describe('with required arguments', () => {
     beforeEach(() => {
       cli.command('hello <name>', (res, name) => {
         res.send(`${name}, ${res.envelope.user.name} says hello`);
       });
-
-      cli.command('goodbye [name]', (res, name) => {
-        res.reply(`goodbye`);
-      });
-
     });
 
     it('passes arguments to callback', async () => {
@@ -60,15 +55,31 @@ describe('hubot-commands', () => {
         ['hubot', 'error: missing required argument `name`']
       ]);
     });
+  });
+
+  describe('with optional arguments', () => {
+    beforeEach(() => {
+      cli.command('goodbye [name]', (res, name) => {
+        res.send(`goodbye ${name || 'world'}`);
+      });
+    });
+
+    it('passes arguments to callback', async () => {
+      await room.user.say('alice', '@hubot goodbye bob');
+
+      expect(room.messages).toEqual([
+        ['alice', '@hubot goodbye bob'],
+        ['hubot', 'goodbye bob']
+      ]);
+    });
 
     it('does not return an error when optional arguments', async () => {
       await room.user.say('alice', '@hubot goodbye');
 
       expect(room.messages).toEqual([
         ['alice', '@hubot goodbye'],
-        ['hubot', '@alice goodbye']
+        ['hubot', 'goodbye world']
       ]);
     });
-
   });
 });
