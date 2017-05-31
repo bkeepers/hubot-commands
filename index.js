@@ -9,6 +9,10 @@ class Command {
     this.action = action;
   }
 
+  matches(name) {
+    return name == this.name || name == this.alias();
+  }
+
   validateArgs(args) {
     for(let i = 0; i < this.arguments.length; i++) {
       const arg = this.arguments[i];
@@ -70,9 +74,7 @@ module.exports = (robot) => {
     if(message instanceof TextMessage) {
       const match = message.match(regex);
       if(match) {
-        match.command = commands.find(cmd => {
-          return [cmd.name, cmd.alias()].includes(match[1]);
-        });
+        match.command = commands.find(cmd => cmd.matches(match[1]));
         if(match.command) {
           return match
         }
