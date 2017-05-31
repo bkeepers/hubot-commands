@@ -28,6 +28,24 @@ class Command {
       arg.validate(args[i]);
     }
   }
+
+  description(str) {
+    if (str === undefined) {
+      return this._description;
+    } else {
+      this._description = str;
+      return this;
+    }
+  }
+
+  get help() {
+    let help = `hubot ${this.name}`
+    if(this.arguments.length)
+      help += ' ' + this.arguments.map(arg => arg.help).join(' ');
+    if(this._description)
+      help += ` - ${this._description}`
+    return help;
+  }
 }
 
 class Argument {
@@ -42,14 +60,27 @@ class Argument {
       throw `missing required argument \`${this.name}\``;
     }
   }
+
+  get help() {
+    return `${this.required ? '<' : '['}${this.name}${this.required ? '>' : ']'}`
+  }
 }
 
 module.exports = (robot) => {
-  return {
-    command(name, action) {
-      const cmd = new Command(name, action);
-      robot.respond(cmd.regex, cmd.handler.bind(cmd));
-      return cmd;
-    }
+  const commands = [];
+
+  function command(name, action) {
+    const cmd = new Command(name, action);
+    robot.respond(cmd.regex, cmd.handler.bind(cmd));
+    commands.push(cmd)
+    return cmd;
   }
+
+  //
+  command('help', (res) => {
+    const help  = commands.map(cmd => cmd.help).filter(cmd => cmd);
+    res.send(help.join('\n'));
+  }).description('display help for available commands');
+
+  return {command};
 }

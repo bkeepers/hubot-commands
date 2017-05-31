@@ -31,6 +31,37 @@ describe('.command', () => {
     ]);
   });
 
+  describe('help', () => {
+    it('adds the description to help', async () => {
+      cli.command('test <arg>', res => { })
+        .description('a description of the command');
+
+      await room.user.say('alice', '@hubot help');
+
+      expect(room.messages).toEqual([
+        ['alice', '@hubot help'],
+        ['hubot', [
+          'hubot help - display help for available commands',
+          'hubot test <arg> - a description of the command'
+        ].join('\n')]
+      ]);
+    });
+
+    it('shows undocumented commands in help', async () => {
+      cli.command('test <arg>', res => { });
+
+      await room.user.say('alice', '@hubot help');
+
+      expect(room.messages).toEqual([
+        ['alice', '@hubot help'],
+        ['hubot', [
+          'hubot help - display help for available commands',
+          'hubot test <arg>'
+        ].join('\n')]
+      ]);
+    });
+  });
+
   describe('with required arguments', () => {
     beforeEach(() => {
       cli.command('hello <name>', (res, name) => {
