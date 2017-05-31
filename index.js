@@ -4,13 +4,13 @@ class Command {
   constructor(definition, action) {
     const [name, ...args] = definition.split(/ +/);
 
-    this.name = name;
+    this._name = name;
     this.arguments = args.map(arg => new Argument(arg));
     this.action = action;
   }
 
   matches(name) {
-    return name == this.name || name == this.alias();
+    return name == this._name || name == this._alias;
   }
 
   validateArgs(args) {
@@ -39,7 +39,7 @@ class Command {
   }
 
   get help() {
-    let help = `hubot ${this.name}`
+    let help = `hubot ${this._name}`
     if(this.arguments.length)
       help += ' ' + this.arguments.map(arg => arg.help).join(' ');
     if(this._description)
@@ -51,18 +51,18 @@ class Command {
 class Argument {
   constructor(definition) {
     const match = definition.match(/^([\[<])?([^\]>]+)[\]>]?$/)
-    this.name = match[2];
+    this._name = match[2];
     this.required = match[1] == '<';
   }
 
   validate(arg) {
     if(this.required && null == arg) {
-      throw `missing required argument \`${this.name}\``;
+      throw `missing required argument \`${this._name}\``;
     }
   }
 
   get help() {
-    return `${this.required ? '<' : '['}${this.name}${this.required ? '>' : ']'}`
+    return `${this.required ? '<' : '['}${this._name}${this.required ? '>' : ']'}`
   }
 }
 
